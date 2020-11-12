@@ -77,6 +77,7 @@ async def handle_actions(ctx: commands.Context, actions: [BoundAction]):
 
 @discord.command()
 async def status(ctx: commands.Context):
+    """Get the status of the server"""
     server = get_volume().server
 
     if server is not None:
@@ -101,6 +102,7 @@ async def status(ctx: commands.Context):
 @discord.command()
 @requires_role()
 async def start(ctx: commands.Context):
+    """Create and initialize a new server with an attached volume"""
     async with ctx.channel.typing():
         try:
             await ctx.channel.send("Creating a new server, this might take a minute")
@@ -134,6 +136,7 @@ async def start(ctx: commands.Context):
 @discord.command()
 @requires_role()
 async def stop(ctx: commands.Context):
+    """Stop and delete the server, keeping only the volume"""
     async with ctx.channel.typing():
         try:
             # noinspection PyTypeChecker
