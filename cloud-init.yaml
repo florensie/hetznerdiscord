@@ -1,0 +1,57 @@
+## template: jinja
+#cloud-config
+
+# Add user florens with sudo priviledges, ssh-keys supplied during server creation and bash as shell
+users:
+  - name: florens
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys: 
+      {% for pub_key in v1.public_ssh_keys %}
+      - {{ pub_key }}
+      {% endfor %}
+
+# Install java 8 runtime (this also updates repositories)
+packages:
+  - openjdk-8-jre-headless
+  - screen
+
+mounts:
+  - [sdb, /mnt, "ext4", "discard,nofail,defaults", "0", "0"]
+
+# Add systemd service
+write_files:
+  - path: /etc/systemd/system/minecraft@.service
+    content: |
+      [Unit]
+      Description=Minecraft Server: %i
+      After=network.target
+
+      [Service]
+      WorkingDirectory=/mnt/%i
+
+      User=florens
+      Group=florens
+
+      Restart=always
+
+      ExecStart=/usr/bin/screen -DmS mc-%i ./startserver.sh
+
+      # https://www.spigotmc.org/threads/run-a-command-to-screen-to-minecraft-server.3430/
+      ExecStop=/usr/bin/screen -p 0 -S mc-%i -X eval 'stuff "stop"\015'
+      ExecStop=/bin/sleep 10
+
+      [Install]
+      WantedBy=multi-user.target
+
+# Enable and start systemd service
+# Note: these commands run early
+# TODO: find a way to allow multiple servers
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable minecraft@aof3
+
+# Reboot after init is finished, this will start the minecraft service on next boot
+# TODO: use user-data script instead to start minecraft service
+power_state:
+  mode: reboot
