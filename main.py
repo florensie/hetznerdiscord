@@ -51,7 +51,7 @@ async def on_ready():
     print(f'Bot authenticated as {discord.user}')
 
 
-async def handle_actions(ctx: commands.Context, actions: list[BoundAction]):
+async def handle_actions(ctx: commands.Context, actions: [BoundAction]):
     msg = None
     all_success = True
 
