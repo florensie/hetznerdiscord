@@ -49,7 +49,7 @@ write_files:
 # TODO: find a way to allow multiple servers
 runcmd:
   - systemctl daemon-reload
-  - systemctl enable minecraft@aof3
+  - systemctl enable minecraft@server
 
 # Reboot after init is finished, this will start the minecraft service on next boot
 # TODO: use user-data script instead to start minecraft service
