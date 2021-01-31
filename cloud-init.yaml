@@ -39,7 +39,7 @@ write_files:
 
       # https://www.spigotmc.org/threads/run-a-command-to-screen-to-minecraft-server.3430/
       ExecStop=/usr/bin/screen -p 0 -S mc-%i -X eval 'stuff "stop"\015'
-      ExecStop=/bin/sleep 10
+      ExecStop=/bin/sleep 30
 
       [Install]
       WantedBy=multi-user.target
