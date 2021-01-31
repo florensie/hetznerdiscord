@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+
 from discord.ext import commands
 from dotenv import load_dotenv
 from mcstatus import MinecraftServer
@@ -13,6 +15,7 @@ from hcloud.actions.client import BoundAction
 from hcloud.volumes.client import BoundVolume
 
 load_dotenv()
+os.chdir(Path(__file__).parent.absolute())
 
 # Discord config
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
