@@ -143,7 +143,7 @@ async def start(ctx: commands.Context):
 @requires_role()
 async def stop(ctx: commands.Context):
     """Stop and delete the server, keeping only the volume"""
-    await ctx.send(f"{ctx.guild.get_member(141883348959232001).mention} oman pls stop")
+    await ctx.send(f"<@141883348959232001> oman pls stop")
 
     # TODO: oh god fix
     # async with ctx.channel.typing():
