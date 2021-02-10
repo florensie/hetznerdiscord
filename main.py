@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 import hcloud as hcl
-from discord import Member
+from discord import Member, Guild
 from discord.ext import commands
 from dotenv import load_dotenv
 from hcloud.actions.client import BoundAction
@@ -143,8 +143,7 @@ async def start(ctx: commands.Context):
 @requires_role()
 async def stop(ctx: commands.Context):
     """Stop and delete the server, keeping only the volume"""
-    florens: Member = ctx.guild.get_member(141883348959232001)
-    await ctx.send(f"{florens.mention} oman pls stop")
+    await ctx.send(f"{ctx.guild.get_member(141883348959232001).mention} oman pls stop")
 
     # TODO: oh god fix
     # async with ctx.channel.typing():
