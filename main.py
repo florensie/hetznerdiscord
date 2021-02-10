@@ -1,18 +1,16 @@
 import os
 from pathlib import Path
 
+import hcloud as hcl
+from discord import Member
 from discord.ext import commands
 from dotenv import load_dotenv
-from mcstatus import MinecraftServer
-
-import hcloud as hcl
+from hcloud.actions.client import BoundAction
+from hcloud.actions.domain import ActionFailedException, ActionTimeoutException
+from hcloud.images.domain import Image
 from hcloud.server_types.domain import ServerType
 from hcloud.volumes.domain import Volume
-from hcloud.images.domain import Image
-from hcloud.actions.domain import ActionFailedException, ActionTimeoutException
-from hcloud.servers.client import BoundServer
-from hcloud.actions.client import BoundAction
-from hcloud.volumes.client import BoundVolume
+from mcstatus import MinecraftServer
 
 load_dotenv()
 os.chdir(Path(__file__).parent.absolute())
@@ -145,41 +143,45 @@ async def start(ctx: commands.Context):
 @requires_role()
 async def stop(ctx: commands.Context):
     """Stop and delete the server, keeping only the volume"""
-    async with ctx.channel.typing():
-        try:
-            # noinspection PyTypeChecker
-            volume: BoundVolume = get_volume()
-            server = volume.server
-            if server is None:
-                await ctx.channel.send("Cannot stop server because it doesn't exist")
-                return
-            elif server.status not in [BoundServer.model.STATUS_OFF, BoundServer.model.STATUS_RUNNING]:
-                await ctx.channel.send(f"Server is busy ({server.status}).")
-                return
-            elif server.locked:
-                await ctx.channel.send("Cannot stop server because it is locked")
-                return
+    florens: Member = ctx.guild.get_member(141883348959232001)
+    await ctx.send(f"{florens.mention} oman pls stop")
 
-            # TODO: this completes too soon?
-            await ctx.channel.send("Shutting down server...")
-            if not await handle_actions(ctx, [server.shutdown()]):
-                await ctx.channel.send("An action has failed, aborting")
-                return
-
-            await ctx.channel.send("Detatching volume...")
-            if not await handle_actions(ctx, [volume.detach()]):
-                await ctx.channel.send("An action has failed, aborting")
-                return
-
-            await ctx.channel.send("Deleting server...")
-            if not await handle_actions(ctx, [server.delete()]):
-                await ctx.channel.send("An action has failed, aborting")
-                return
-
-            await ctx.channel.send("Server deleted")
-        except Exception as e:
-            await ctx.channel.send(f"An error occured while stopping the server:\r\n`{e}`")
-            return
+    # TODO: oh god fix
+    # async with ctx.channel.typing():
+    #     try:
+    #         # noinspection PyTypeChecker
+    #         volume: BoundVolume = get_volume()
+    #         server = volume.server
+    #         if server is None:
+    #             await ctx.channel.send("Cannot stop server because it doesn't exist")
+    #             return
+    #         elif server.status not in [BoundServer.model.STATUS_OFF, BoundServer.model.STATUS_RUNNING]:
+    #             await ctx.channel.send(f"Server is busy ({server.status}).")
+    #             return
+    #         elif server.locked:
+    #             await ctx.channel.send("Cannot stop server because it is locked")
+    #             return
+    #
+    #         # TODO: this completes too soon?
+    #         await ctx.channel.send("Shutting down server...")
+    #         if not await handle_actions(ctx, [server.shutdown()]):
+    #             await ctx.channel.send("An action has failed, aborting")
+    #             return
+    #
+    #         await ctx.channel.send("Detatching volume...")
+    #         if not await handle_actions(ctx, [volume.detach()]):
+    #             await ctx.channel.send("An action has failed, aborting")
+    #             return
+    #
+    #         await ctx.channel.send("Deleting server...")
+    #         if not await handle_actions(ctx, [server.delete()]):
+    #             await ctx.channel.send("An action has failed, aborting")
+    #             return
+    #
+    #         await ctx.channel.send("Server deleted")
+    #     except Exception as e:
+    #         await ctx.channel.send(f"An error occured while stopping the server:\r\n`{e}`")
+    #         return
 
 if __name__ == '__main__':
     discord.run(DISCORD_TOKEN)
